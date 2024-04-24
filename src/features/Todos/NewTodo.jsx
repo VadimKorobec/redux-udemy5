@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
-
-import {createTodo} from './todos-slice';
+import { createTodo } from "./todos-slice";
 
 export const NewTodo = () => {
   const dispatch = useDispatch();
