@@ -1,12 +1,21 @@
 import { useSelector, useDispatch } from "react-redux";
 
-import {selectVisibleTodos, toggleTodo, removeTodo} from './todos-slice';
-
+import {
+  selectVisibleTodos,
+  toggleTodo,
+  removeTodo,
+  loadTodos,
+} from "./todos-slice";
+import { useEffect } from "react";
 
 export const TodoList = () => {
-  const activeFilter = useSelector(state => state.filter)
-  const todos = useSelector(state => selectVisibleTodos(state, activeFilter));
+  const activeFilter = useSelector((state) => state.filter);
+  const todos = useSelector((state) => selectVisibleTodos(state, activeFilter));
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadTodos());
+  }, [dispatch]);
 
   return (
     <ul>
@@ -16,8 +25,8 @@ export const TodoList = () => {
             type="checkbox"
             checked={todo.completed}
             onChange={() => dispatch(toggleTodo(todo.id))}
-          />{" "}
-          {todo.title}{" "}
+          />
+          {todo.title}
           <button onClick={() => dispatch(removeTodo(todo.id))}>delete</button>
         </li>
       ))}

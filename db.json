@@ -1,39 +1,9 @@
 {
   "todos": [
     {
-      "id": 1,
-      "title": "Learn Toolkit",
-      "completed": false
-    },
-    {
       "id": 2,
       "title": "Learn React",
-      "completed": true
-    },
-    {
-      "id": 3,
-      "title": "Learn English",
       "completed": false
-    },
-    {
-      "id": 4,
-      "title": "Learn Redux",
-      "completed": true
-    },
-    {
-      "id": 5,
-      "title": "Something new",
-      "completed": false
-    },
-    {
-      "title": "asdasd",
-      "completed": false,
-      "id": 6
-    },
-    {
-      "title": "Create todo",
-      "completed": false,
-      "id": 7
     }
   ]
 }
