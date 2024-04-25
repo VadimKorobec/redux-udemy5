@@ -62,11 +62,6 @@ const todoSlice = createSlice({
     loading: "idle",
     error: null,
   },
-  // reducers: {
-  //   removeTodo: (state, action) => {
-  //     state.items = state.items.filter((todo) => todo.id !== action.payload);
-  //   },
-  // },
   extraReducers: (builder) => {
     builder
       .addCase(resetToDefault, () => {
@@ -88,11 +83,6 @@ const todoSlice = createSlice({
         state.items = [...state.items, action.payload];
       })
       .addCase(toggleTodo.fulfilled, (state, action) => {
-        // const updatedTodo = action.payload;
-        // const index = state.items.findIndex(
-        //   (todo) => todo.id === updatedTodo.id
-        // );
-        // state.items[index] = updatedTodo;
         state.items = state.items.map((item) =>
           item.id === action.payload.id ? action.payload : item
         );
