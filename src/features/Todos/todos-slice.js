@@ -2,11 +2,26 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { resetToDefault } from "../Reset/reset-action";
 
-export const loadTodos = createAsyncThunk("todos/addTodos", async () => {
-  const res = await fetch("http://localhost:3001/todos");
-  const data = await res.json();
-  return data;
-});
+export const loadTodos = createAsyncThunk(
+  "todos/addTodos",
+  async (_, thunkAPI) => {
+    try {
+      const res = await fetch("http://localhost:3001/todos");
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  },
+  {
+    condition: (_, { getState, extra }) => {
+      const { loading } = getState().todos;
+      if (loading === "loading") {
+        return false;
+      }
+    },
+  }
+);
 
 export const createTodo = createAsyncThunk(
   "todos/createTodo",
@@ -24,23 +39,20 @@ export const createTodo = createAsyncThunk(
   }
 );
 
-export const toggleTodo = createAsyncThunk(
-  "todos/toggleTodo",
-  async (id, { getState }) => {
-    const todo = getState().todos.items.find((todo) => todo.id === id);
-    const res = await fetch(`http://localhost:3001/todos/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ completed: !todo.completed }),
-    });
+export const toggleTodo = createAsyncThunk("todos/toggleTodo", async (todo) => {
+  console.log(todo);
+  const res = await fetch(`http://localhost:3001/todos/${todo.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ completed: !todo.completed }),
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    return data;
-  }
-);
+  return data;
+});
 
 export const removeTodo = createAsyncThunk("todos/removeTodo", async (id) => {
   const res = await fetch(`http://localhost:3001/todos/${id}`, {
@@ -89,7 +101,27 @@ const todoSlice = createSlice({
       })
       .addCase(removeTodo.fulfilled, (state, action) => {
         state.items = state.items.filter((todo) => todo.id !== action.payload);
-      });
+      })
+      .addMatcher(
+        (action) => action.type.endsWith("/pending"),
+        (state, action) => {
+          state.loading = "loading";
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        (action) => action.type.endsWith("/rejected"),
+        (state, action) => {
+          state.loading = "indle";
+          state.error = action.payload || action.error.message;
+        }
+      )
+      .addMatcher(
+        (action) => action.type.endsWith("/fulfilled"),
+        (state, action) => {
+          state.loading = "indle";
+        }
+      );
   },
 });
 

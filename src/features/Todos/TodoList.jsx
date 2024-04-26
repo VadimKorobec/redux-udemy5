@@ -6,8 +6,6 @@ import {
   removeTodo,
   loadTodos,
 } from "./todos-slice";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export const TodoList = () => {
   const activeFilter = useSelector((state) => state.filter);
@@ -16,15 +14,16 @@ export const TodoList = () => {
   const { error, loading } = useSelector((state) => state.todos);
 
   useEffect(() => {
-    dispatch(loadTodos()).then(() => {
-      toast("all todos ere fetch");
-    });
+    const promise = dispatch(loadTodos());
+    return () => {
+      promise.abort();
+    };
   }, [dispatch]);
 
   return (
     <>
       <ul>
-        {error && <h2>Error!</h2>}
+        {error && <h2>{error}</h2>}
         {loading === "loading" && <h2>Loading...</h2>}
         {loading === "idle" &&
           !error &&
@@ -33,7 +32,7 @@ export const TodoList = () => {
               <input
                 type="checkbox"
                 checked={todo.completed}
-                onChange={() => dispatch(toggleTodo(todo.id))}
+                onChange={() => dispatch(toggleTodo(todo))}
               />
               {todo.title}
               <button onClick={() => dispatch(removeTodo(todo.id))}>
@@ -42,7 +41,6 @@ export const TodoList = () => {
             </li>
           ))}
       </ul>
-      <ToastContainer />
     </>
   );
 };
